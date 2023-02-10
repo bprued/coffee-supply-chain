@@ -1,0 +1,9 @@
+{
+  "trade" : {
+    "type" : "Farmer",
+    "name" : "brown",
+    "country" : "Morty Smith",
+    "buyPrice": 500,
+    "sellPrice": 1000
+  }
+}

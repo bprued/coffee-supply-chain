@@ -1,10 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
 import { Button, Input, Space, Table } from 'antd';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import type { FilterConfirmProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
+import { database } from '../../lib/firebase';
+import { ref, child, get } from "firebase/database";
 
 interface DataType {
   key: string;
@@ -17,38 +19,26 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const data: DataType[] = [
-  {
-    key: '1',
-    type: 'Farmer',
-    name: 'Test1',
-    country: 'Thailand',
-    buy: 120,
-    sell: 40
-  },
-  {
-    key: '2',
-    type: 'Merchant',
-    name: 'Test2',
-    country: 'Thailand',
-    buy: 10,
-    sell: 5020
-  },
-  {
-    key: '3',
-    type: 'Roaster',
-    name: 'Test3',
-    country: 'Thailand',
-    buy: 130,
-    sell: 50
-  },
-];
-
 const Parties: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
+  const [data, setData] = useState([])
   const searchInput = useRef<InputRef>(null);
 
+  useEffect(() => {
+    const dbRef = ref(database);
+    get(child(dbRef, `tradePrice`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+        setData(snapshot.val())
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }, [])
+  
   const handleSearch = (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
