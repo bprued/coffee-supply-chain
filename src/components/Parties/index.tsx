@@ -159,7 +159,7 @@ const Parties: React.FC = () => {
     },
   ];
 
-  return <Table columns={columns} dataSource={data} />;
+  return <Table columns={columns} dataSource={data} scroll={{ y: 450 }}/>;
 };
 
 export default Parties;

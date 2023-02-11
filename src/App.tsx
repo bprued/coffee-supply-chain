@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
   return (
     <Layout className="App">
-      <Sider collapsible collapsed={collapsed}>
+      <Sider collapsible trigger={null} collapsed={collapsed}>
         <div className="logo">LOGO</div>
         <Menu
           theme="dark"
