@@ -9,10 +9,10 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import type { MenuProps } from 'antd';
-import Import from './components/Import';
-import Parties from './components/Parties';
-import TaxCal from './components/TaxCal';
-import Trade from './components/Trade';
+import Import from '../../components/Import';
+import Parties from '../../components/Parties';
+import TaxCal from '../../components/TaxCal';
+import Trade from '../../components/Trade';
 import './App.scss'
 
 
