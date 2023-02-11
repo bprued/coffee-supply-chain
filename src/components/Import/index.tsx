@@ -17,6 +17,28 @@ type Data = {
   "Sell Price": string
 }
 
+const uploadFile = (file: any) => {
+  Papa.parse(file, {
+    header: true,
+    download: true,
+    skipEmptyLines: true,
+    delimiter: ",",
+    complete: (results: ParseResult<Data>) => {
+      let priceData = results.data.filter((item) => item['Name'].length > 0).map((item, index) => {
+        return {
+          key: index,
+          type: item['Party Type'],
+          name: item['Name'],
+          country: item['Country'],
+          buy: item['Buy Price'],
+          sell: item['Sell Price']
+        }
+      })
+      set(ref(database, '/tradePrice'), priceData)
+    },
+  })
+}
+
 const props: UploadProps = {
   name: 'file',
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
@@ -34,31 +56,14 @@ const props: UploadProps = {
     }
     if (status === 'done') {
       message.success(`${info.file.name} file uploaded successfully.`);
-      Papa.parse(info.file.originFileObj as RcFile, {
-        header: true,
-        download: true,
-        skipEmptyLines: true,
-        delimiter: ",",
-        complete: (results: ParseResult<Data>) => {
-          let priceData = results.data.filter((item) => item['Name'].length > 0).map((item, index) => {
-            return {
-              key: index,
-              type: item['Party Type'],
-              name: item['Name'],
-              country: item['Country'],
-              buy: item['Buy Price'],
-              sell: item['Sell Price']
-            }
-          })
-          set(ref(database, '/tradePrice'), priceData)
-        },
-      })
+      uploadFile(info.file.originFileObj as RcFile)
     } else if (status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
     }
   },
   onDrop(e) {
     console.log('Dropped files', e.dataTransfer.files);
+    uploadFile(e.dataTransfer.files)
   }
 };
 

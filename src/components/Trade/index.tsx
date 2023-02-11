@@ -25,7 +25,6 @@ const Trade: React.FC = () => {
     get(child(dbRef, `tradePrice`))
       .then((snapshot) => {
         if (snapshot.exists()) {
-          console.log(snapshot.val());
           setNewKey(snapshot.val().length);
           setData(snapshot.val().reverse())
           setInitLoading(false)
@@ -43,7 +42,6 @@ const Trade: React.FC = () => {
   }, []);
 
   const showModal = () => {
-    // fetchDatabase()
     setIsModalOpen(true);
   };
 
@@ -57,7 +55,7 @@ const Trade: React.FC = () => {
       buy: value.buy,
       sell: value.sell,
     };
-    // Write the new post's data simultaneously in the posts list and the user's post list.
+
     const updates: { [key: string]: any } = {};
     updates["/tradePrice/" + newKey] = newData;
 
@@ -71,7 +69,6 @@ const Trade: React.FC = () => {
   const onFinish = (values: any) => {
     handleOk(values);
     fetchDatabase()
-    console.log("Success:", values);
   };
 
   const onFinishFailed = (errorInfo: any) => {

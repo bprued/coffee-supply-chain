@@ -29,7 +29,6 @@ const Parties: React.FC = () => {
     const dbRef = ref(database);
     get(child(dbRef, `tradePrice`)).then((snapshot) => {
       if (snapshot.exists()) {
-        console.log(snapshot.val());
         setData(snapshot.val())
       } else {
         console.log("No data available");
