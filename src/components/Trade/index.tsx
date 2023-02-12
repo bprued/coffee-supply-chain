@@ -20,6 +20,10 @@ const Trade: React.FC = () => {
   const [data, setData] = useState<DataType[]>([]);
   const [newKey, setNewKey] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm<{ type: string, name: string, country: string, sell: number, buy: number }>();
+  const sellValue = Form.useWatch('sell', form)
+  const buyValue = Form.useWatch('buy', form)
+  const typeValue = Form.useWatch('type', form)
 
   const fetchDatabase = () => {
     get(child(dbRef, `tradePrice`))
@@ -75,6 +79,19 @@ const Trade: React.FC = () => {
     console.log("Failed:", errorInfo);
   };
 
+  const checkPrice = () => {
+    if(sellValue < buyValue) {
+      return Promise.reject(new Error('Sell Price must be greater than Buy Price!'));
+    }
+    if(typeValue.toLocaleLowerCase() === 'farmer' && buyValue?.toString().length > 0) {
+      return Promise.reject(new Error('Farmers do not have a Buy price!'));
+    }
+    if(typeValue.toLocaleLowerCase() === 'marchant' && sellValue?.toString().length > 0) {
+      return Promise.reject(new Error('Merchants do not have a Sell price!'));
+    }
+    return Promise.resolve();
+  }
+
   return (
     <>
       <Button type="primary" onClick={showModal}>
@@ -87,7 +104,7 @@ const Trade: React.FC = () => {
         footer={[]}
       >
         <Form
-          name="basic"
+          form={form}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           style={{ maxWidth: 600 }}
@@ -120,14 +137,14 @@ const Trade: React.FC = () => {
           <Form.Item
             label="Sell Price"
             name="sell"
-            rules={[{ required: true, message: "Please input your sell price" }]}
+            rules={[{ validator: checkPrice}]}
           >
             <InputNumber />
           </Form.Item>
           <Form.Item
             label="Buy Price"
             name="buy"
-            rules={[{ required: true, message: "Please input your buy price" }]}
+            rules={[{ validator: checkPrice}]}
           >
             <InputNumber />
           </Form.Item>

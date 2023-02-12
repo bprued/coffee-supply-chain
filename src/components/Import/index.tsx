@@ -24,15 +24,30 @@ const uploadFile = (file: any) => {
     skipEmptyLines: true,
     delimiter: ",",
     complete: (results: ParseResult<Data>) => {
-      let priceData = results.data.filter((item) => item['Name'].length > 0).map((item, index) => {
-        return {
-          key: index,
-          type: item['Party Type'],
-          name: item['Name'],
-          country: item['Country'],
-          buy: item['Buy Price'],
-          sell: item['Sell Price']
+      let priceData = results.data.filter((item) => { 
+        if(item['Name'].length > 0) {
+          let isFarmer = item['Party Type'].toLocaleLowerCase() === 'farmer'
+          let isMerchant = item['Party Type'].toLocaleLowerCase() === 'merchant'
+          let hadBuyPrice = item['Buy Price'].length > 0
+          let hadSellPrice = item['Sell Price'].length > 0 
+          let isBuyGraterThanSell = parseInt(item['Buy Price']) - parseInt(item['Sell Price']) > 0
+          let isValidFarmerTrade = isFarmer && !hadBuyPrice
+          let isValidMerchantTrade = isMerchant && !hadSellPrice
+          let isOthersHadBuyAndSellPrice = (!isFarmer && !isMerchant) && (hadBuyPrice && hadSellPrice)
+          if((isValidFarmerTrade || isValidMerchantTrade || isOthersHadBuyAndSellPrice) && !isBuyGraterThanSell) {
+            return item
+          }
+          return false
         }
+      }).map((item, index) => {
+          return {
+            key: index,
+            type: item['Party Type'],
+            name: item['Name'],
+            country: item['Country'],
+            buy: item['Buy Price'],
+            sell: item['Sell Price']
+          }
       })
       set(ref(database, '/tradePrice'), priceData)
     },
