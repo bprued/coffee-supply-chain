@@ -161,7 +161,7 @@ const Trade: React.FC = () => {
       <List
         style={{    
           height: '450px',
-          overflow: 'scroll',
+          overflowY: 'scroll',
           marginTop: '50px'
         }}
         className="demo-loadmore-list"

@@ -24,6 +24,7 @@ const uploadFile = (file: any) => {
     skipEmptyLines: true,
     delimiter: ",",
     complete: (results: ParseResult<Data>) => {
+      // eslint-disable-next-line array-callback-return
       let priceData = results.data.filter((item) => { 
         if(item['Name'].length > 0) {
           let isFarmer = item['Party Type'].toLocaleLowerCase() === 'farmer'
